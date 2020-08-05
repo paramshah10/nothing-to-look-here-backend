@@ -65,12 +65,13 @@ def convertFile(filename):
             name = name.split('.')
 
             if len(name) == 1:
+                name = ''.join(name)
                 name = name.split('_')
                 if len(name) == 1:
                     csv_writer.writerow([row[0], name[0].title(), '', domain])
                 if len(name) >= 2:
                     csv_writer.writerow([row[0], name[0].title(), ''.join(name[1:]).title(), domain])
-            if len(name) >= 2:
+            elif len(name) >= 2:
                 csv_writer.writerow([row[0], name[0].title(), ''.join(name[1:]).title(), domain])
         except Exception as error:
             csv_writer.writerow([row[0], ''])
