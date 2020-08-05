@@ -2,6 +2,7 @@ from flask import Flask, request, make_response
 from flask_cors import CORS
 import csv, os, io
 # from werkzeug.wrappers import Response
+from werkzeug.exceptions import BadRequest
 
 app = Flask(__name__)
 CORS(app, resources=r"/*")
@@ -38,7 +39,11 @@ def getFile():
     except Exception as error:
         print('something went wrong:', error)
 
-        return f"Failure with error: {error}", 400
+        e = BadRequest()
+        e.data = {'error': f'Something went wrong: {error}'}
+        raise e
+
+        return f'Something went wrong: {error}', 400
 
 def convertFile(filename):
     csv_file = open(filename, 'r')
@@ -52,9 +57,10 @@ def convertFile(filename):
     i = 0
     for row in csv_reader:
         if i == 0:
-            csv_writer.writerow(row)
+            csv_writer.writerow(["Email, First Name, Last Name, Domain"])
             i += 1
-        else:
+        
+        try:
             name, domain = row[0].split('@')
             name = name.split('.')
 
@@ -62,6 +68,8 @@ def convertFile(filename):
                 csv_writer.writerow([row[0], name[0], '', domain])
             if len(name) >= 2:
                 csv_writer.writerow([row[0], name[0], ''.join(name[1:]), domain])
+        except Exception as error:
+            csv_writer.writerow([row[0], ''])
         
     csv_file.close()
     os.remove(filename)
