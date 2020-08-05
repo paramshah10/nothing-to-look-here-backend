@@ -39,9 +39,9 @@ def getFile():
     except Exception as error:
         print('something went wrong:', error)
 
-        e = BadRequest()
-        e.data = {'error': f'Something went wrong: {error}'}
-        raise e
+        # e = BadRequest()
+        # e.data = {'error': f'Something went wrong: {error}'}
+        # raise e
 
         return f'Something went wrong: {error}', 400
 
@@ -65,9 +65,13 @@ def convertFile(filename):
             name = name.split('.')
 
             if len(name) == 1:
-                csv_writer.writerow([row[0], name[0], '', domain])
+                name = name.split('_')
+                if len(name) == 1:
+                    csv_writer.writerow([row[0], name[0].title(), '', domain])
+                if len(name) >= 2:
+                    csv_writer.writerow([row[0], name[0].title(), ''.join(name[1:]).title(), domain])
             if len(name) >= 2:
-                csv_writer.writerow([row[0], name[0], ''.join(name[1:]), domain])
+                csv_writer.writerow([row[0], name[0].title(), ''.join(name[1:]).title(), domain])
         except Exception as error:
             csv_writer.writerow([row[0], ''])
         
