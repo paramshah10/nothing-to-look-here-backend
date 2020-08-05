@@ -38,7 +38,7 @@ def getFile():
     except Exception as error:
         print('something went wrong:', error)
 
-        return 'Failure', 404
+        return f"Failure with error: {error}", 400
 
 def convertFile(filename):
     csv_file = open(filename, 'r')
